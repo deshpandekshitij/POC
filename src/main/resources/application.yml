@@ -1,0 +1,17 @@
+server:
+  port: 9090
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: kshitij_db
+    password: oracle
+  jpa:
+    show-sql: true
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: poc_mongo
+      authentication-database: admin
+      username: poc_mongo
+      password: poc_mongo
