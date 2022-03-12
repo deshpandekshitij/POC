@@ -7,6 +7,7 @@ spring:
     password: oracle
     oracleucp:
       connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
+      connection-pool-name: db.ons.pool
       connection-wait-timeout: 60
       min-pool-size: 0
       max-pool-size: 25
@@ -15,7 +16,7 @@ spring:
       max-connection-reuse-count: 100
       timeout-check-interval: 60
       fast-connection-failover-enabled: true
-      o-n-s-configuration:
+      o-n-s-configuration: nodes=db.ons.node
       validate-connection-on-borrow: true
       s-q-l-for-validate-connection: SELECT 1 from dual
       max-statements: 0
