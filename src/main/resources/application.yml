@@ -5,6 +5,20 @@ spring:
     url: jdbc:oracle:thin:@localhost:1521:orcl
     username: kshitij_db
     password: oracle
+    oracleucp:
+      connection-factory-class-name: oracle.jdbc.pool.OracleDataSource
+      connection-wait-timeout: 60
+      min-pool-size: 0
+      max-pool-size: 25
+      property-cycle: 60
+      inactive-connection-timeout: 300
+      max-connection-reuse-count: 100
+      timeout-check-interval: 60
+      fast-connection-failover-enabled: true
+      o-n-s-configuration:
+      validate-connection-on-borrow: true
+      s-q-l-for-validate-connection: SELECT 1 from dual
+      max-statements: 0
   jpa:
     show-sql: true
   data:

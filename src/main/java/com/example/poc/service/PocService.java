@@ -7,10 +7,5 @@ import com.example.poc.entities.StudentEntity;
 
 public interface PocService {
 	
-	public List<StudentEntity> getAllStudent();
-	
-	public List<Book> getAllBooks();
-	
-	public void insertBook(Book book);
-
+	public int callStoredProcedure(int inParam);
 }

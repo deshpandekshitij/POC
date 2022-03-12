@@ -1,40 +1,33 @@
 package com.example.poc.serviceimpl;
 
-import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
-import com.example.poc.documents.Book;
-import com.example.poc.entities.StudentEntity;
-import com.example.poc.repositories.BookRepository;
-import com.example.poc.repositories.StudentRepository;
 import com.example.poc.service.PocService;
 
 @Service
 public class PocServiceImpl implements PocService{
 	
 	@Autowired
-	private StudentRepository studentRepository;
-	
-	@Autowired
-	private BookRepository bookRepository;
+	private JdbcTemplate jdbcTemplate;
 
 	@Override
-	public List<StudentEntity> getAllStudent() {
-		return studentRepository.findAll();
-	}
-
-	@Override
-	public List<Book> getAllBooks() {
-		return bookRepository.findAll();
-	}
-
-	@Override
-	public void insertBook(Book book) {		
+	public int callStoredProcedure(int inParam) {
+		SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate)
+				.withProcedureName("sample_sp");
 		
-		bookRepository.save(book);
+		Map<String, Object> result = simpleJdbcCall.execute(new MapSqlParameterSource("in_param", inParam));
+		
+		System.out.println(result.get("OUT_PARAM"));
+		
+		return  Integer.parseInt(result.get("OUT_PARAM").toString());
 	}
+
 	
 	
 
