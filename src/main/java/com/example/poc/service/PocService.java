@@ -8,4 +8,6 @@ import com.example.poc.entities.StudentEntity;
 public interface PocService {
 	
 	public int callStoredProcedure(int inParam);
+	
+	public void printInfo();
 }

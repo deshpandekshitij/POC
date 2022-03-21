@@ -1,66 +1,50 @@
 package com.example.poc.serviceimpl;
 
-import java.sql.CallableStatement;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Types;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.CallableStatementCreator;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SqlOutParameter;
-import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Service;
 
+import com.example.poc.entities.SimpleAdEntAuthenticator;
 import com.example.poc.service.PocService;
+import com.example.poc.utils.SpCallerModel;
+import com.example.poc.utils.StoredProcedureCaller;
 
 @Service
 public class PocServiceImpl implements PocService{
 	
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private StoredProcedureCaller caller;
+	
+	@Autowired
+	private SimpleAdEntAuthenticator userAuthenticator;
+	
+	@Override
+	public void printInfo() {
+		System.out.println(userAuthenticator.getProvideUrl());
+		System.out.println(userAuthenticator.getDomain());
+		System.out.println(userAuthenticator.getSearchBase());
+		System.out.println(userAuthenticator.getSearchFilter());
+		
+	}
+
+	private Map<String, Object> getAdAuthenticateSqlParameters() {
+		Map<String, Object> inParams = Map.ofEntries(
+				Map.entry("IN_AD_ENT", "1234"), 
+				Map.entry("IN_SSO_KEY", "SSO_KEY"), 
+				Map.entry("IN_APP", "App"), 
+				Map.entry("IN_OS", "Unix"), 
+				Map.entry("IN_IP", "IP_ADDRESS"));
+		
+		return inParams;
+	}
+	
 
 	@Override
 	public int callStoredProcedure(int inParam) {
-		List<SqlParameter> parameters = Arrays.asList(new SqlParameter(Types.NVARCHAR), 
-				new SqlParameter(Types.NVARCHAR),
-				new SqlParameter(Types.NVARCHAR),
-				new SqlParameter(Types.NVARCHAR),
-				new SqlParameter(Types.NVARCHAR),
-				new SqlOutParameter("STATUS" ,Types.INTEGER),
-				new SqlOutParameter("USER_ID", Types.INTEGER),
-				new SqlOutParameter("SESSION_ID", Types.NVARCHAR));
-		String userName = "abcd";
-		String ssoKey = "sso parameter";
-		String app = "app parameter";
-		String remoteAddr = "remote address";
-		
-		Map<String, Object> output = jdbcTemplate.call(new CallableStatementCreator() {
-
-			@Override
-			public CallableStatement createCallableStatement(Connection con) throws SQLException {
-
-				CallableStatement cs = con.prepareCall("{call PR_AUTHENTICATE_AD_ENT(?, ?, ?, ?, ?, ?, ?, ?)}");
-				cs.setString(1, userName);
-				cs.setString(2, ssoKey);
-				cs.setString(3, app);
-				cs.setString(4, "UNIX");
-				cs.setString(5, remoteAddr);
-				cs.registerOutParameter(6, Types.INTEGER);
-				cs.registerOutParameter(7, Types.INTEGER);
-				cs.registerOutParameter(8, Types.NVARCHAR);
-				return cs;
-			}
-		}, parameters);
-		
-		System.out.println(output);
-		return Integer.parseInt(output.get("STATUS").toString());
+		SpCallerModel model = new SpCallerModel("SESS.PR_AUTHENTICATE_AD_ENT", getAdAuthenticateSqlParameters());
+		Map<String, Object> response = caller.callStoredProcedure(model);
+		return Integer.parseInt(response.get("STATUS").toString());
 	}
-
-	
-	
 
 }

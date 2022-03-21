@@ -19,4 +19,10 @@ public class PocController {
 	public int getDataFromOracle(@PathVariable int inParam) {
 		return service.callStoredProcedure(inParam);
 	}
+	
+	@GetMapping("/v1/sample")
+	public String printInfo() {
+		service.printInfo();
+		return "SUCCESS";
+	}
 }
